@@ -1,0 +1,54 @@
+{
+    "name": "abrahamf24/plans-subscriptions",
+    "description": "Package for manage plans and subscriptions",
+    "keywords": [
+        "eloquent",
+        "laravel",
+        "subscription",
+        "plan",
+        "plans",
+        "model",
+        "saas"
+    ],
+    "homepage": "https://github.com/abrahamf24/plans-subscriptions",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Abraham Flores",
+            "email": "abr.flores24@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "laravel/framework": "~5.7.0",
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.2|^7.0",
+        "orchestra/testbench": "~3.5.0|~3.6.0",
+        "orchestra/database": "~3.5.0|~3.6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Abrahamf24\\PlansSubscriptions\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Abrahamf24\\PlansSubscriptions\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Abrahamf24\\PlansSubscriptions\\PlansSubscriptionsServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev"
+}
