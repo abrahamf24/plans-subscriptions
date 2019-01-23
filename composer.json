@@ -1,6 +1,7 @@
 {
     "name": "abrahamf24/plans-subscriptions",
     "description": "Package for manage plans and subscriptions",
+    "version":"1.0.0",
     "keywords": [
         "eloquent",
         "laravel",
@@ -20,7 +21,7 @@
         }
     ],
     "require": {
-        "laravel/framework": "~5.7.0",
+        "laravel/framework": "~5.7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.2|^7.0",
