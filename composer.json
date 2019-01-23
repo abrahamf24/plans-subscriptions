@@ -30,12 +30,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Abrahamf24\\PlansSubscriptions\\": "src"
+            "Abrahamf24\\PlansSubscriptions\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Abrahamf24\\PlansSubscriptions\\Test\\": "tests"
+            "Abrahamf24\\PlansSubscriptions\\Test\\": "tests/"
         }
     },
     "scripts": {
