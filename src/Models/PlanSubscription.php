@@ -37,7 +37,7 @@ class PlanSubscription extends Model
     ];
 
     /**
-     * PlanFeature constructor.
+     * PlanSubscription constructor.
      *
      * @param array $attributes
      */

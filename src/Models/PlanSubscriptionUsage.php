@@ -11,7 +11,7 @@ class PlanSubscriptionUsage extends Model
     ];
 
     /**
-     * PlanFeature constructor.
+     * PlanSubscriptionUsage constructor.
      *
      * @param array $attributes
      */

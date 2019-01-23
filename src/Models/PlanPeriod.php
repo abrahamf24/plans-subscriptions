@@ -15,7 +15,7 @@ class PlanPeriod extends Model
     ];
 
     /**
-     * PlanFeature constructor.
+     * PlanPeriod constructor.
      *
      * @param array $attributes
      */
