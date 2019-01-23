@@ -11,8 +11,6 @@ use Abrahamf24\PlansSubscriptions\Events\ExtendSubscription;
 
 class PlanSubscription extends Model
 {
-    protected $table = 'plans_subscriptions';
-
     protected $fillable = [
     	'name', 
         'payment_method', 
@@ -37,6 +35,17 @@ class PlanSubscription extends Model
     protected $casts = [
     	'is_paid'=>'boolean'
     ];
+
+    /**
+     * PlanFeature constructor.
+     *
+     * @param array $attributes
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->setTable(config('subscriptions.tables.subscriptions'));
+    }
 
     /**
      * Returns the model associated with the subscription
@@ -71,7 +80,7 @@ class PlanSubscription extends Model
      * @return Collection
      */
     public function usages(){
-        return $this->hasMany(config('plans.models.usage'), 'subscription_id');
+        return $this->hasMany(config('subscriptions.models.usage'), 'subscription_id');
     }
 
 
@@ -205,7 +214,7 @@ class PlanSubscription extends Model
      */
     public function consumeFeature(string $featureCode, float $amount)
     {
-        $usageModel = config('plans.models.usage');
+        $usageModel = config('subscriptions.models.usage');
 
         $feature = $this->features()->code($featureCode)->first();
 
@@ -244,7 +253,7 @@ class PlanSubscription extends Model
      */
     public function unconsumeFeature(string $featureCode, float $amount)
     {
-        $usageModel = config('plans.models.usage');
+        $usageModel = config('subscriptions.models.usage');
 
         $feature = $this->features()->code($featureCode)->first();
 
@@ -351,7 +360,7 @@ class PlanSubscription extends Model
                 $newStart = $this->expires_on;
                 $newExpiration = Dates::addPeriods($newStart, $periods, $this->recurring_each_count, $this->recurring_each_unit);
             }
-            $subscriptionModel = config('plans.models.subscription');
+            $subscriptionModel = config('subscriptions.models.subscription');
 
             //Suscripción termina al final del día
             $newExpiration->setTime(23,59,59);

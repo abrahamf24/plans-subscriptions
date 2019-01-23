@@ -13,7 +13,7 @@ trait HasSubscriptions{
      */
     public function subscriptions()
     {
-        return $this->morphMany(config('plans.models.subscription'), 'model');
+        return $this->morphMany(config('subscriptions.models.subscription'), 'model');
     }
 
 	/**
@@ -173,7 +173,7 @@ trait HasSubscriptions{
      * @return PlanSubscription The PlanSubscription model instance.
      */
     public function subscribeTo($plan_period, int $periods = null, $name = 'main', $payment_method=null, $is_paid=false){
-        $subscriptionModel = config('plans.models.subscription');
+        $subscriptionModel = config('subscriptions.models.subscription');
         $plan = $plan_period->plan;
 
         $is_recurring = $plan_period->is_recurring;

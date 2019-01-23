@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PlanFeature extends Model
 {
-    protected $table = 'plans_features';
-
     protected $fillable = [
     	'name', 'code', 'description', 'type', 'limit', 'metadata'
     ];
@@ -15,6 +13,17 @@ class PlanFeature extends Model
     protected $casts = [
         'metadata' => 'object',
     ];
+
+    /**
+     * PlanFeature constructor.
+     *
+     * @param array $attributes
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->setTable(config('subscriptions.tables.plans'));
+    }
 
     /**
      * Returns the model of Plan
