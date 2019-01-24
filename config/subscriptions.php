@@ -14,4 +14,12 @@ return [
         'usages' => 'plan_subscription_usages'
     ],
 
+    /**
+     * Modelo usado para suscripciones, usado para las relaciones
+     * del Trait
+     */
+    'models' => [
+        'subscription' => \Abrahamf24\PlansSubscriptions\PlanSubscription::class
+    ]
+
 ];
