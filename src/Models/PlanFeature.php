@@ -22,7 +22,7 @@ class PlanFeature extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->setTable(config('subscriptions.tables.plans'));
+        $this->setTable(config('subscriptions.tables.features'));
     }
 
     /**

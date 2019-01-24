@@ -26,7 +26,6 @@ trait HasSubscriptions{
      */
     public function currentSubscriptions()
     {
-        \Log::info( 'Now:'.print_r(Carbon::now(),true));
         return $this->subscriptions()
             ->where('starts_on', '<=', Carbon::now())
             ->where(function($query){
