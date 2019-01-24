@@ -31,7 +31,7 @@ class PlanSubscriptionUsage extends Model
     }
 
 
-    public function scopeCode($query, string $code){
-        return $query->where('code', $code);
+    public function scopeFeatureCode($query, string $code){
+        return $query->where('feature_code', $code);
     }
 }

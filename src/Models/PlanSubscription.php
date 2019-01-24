@@ -288,7 +288,7 @@ class PlanSubscription extends Model
      */
     public function getUsageOf(string $featureCode)
     {
-        $usage = $this->usages()->code($featureCode)->first();
+        $usage = $this->usages()->featureCode($featureCode)->first();
         $feature = $this->features()->code($featureCode)->first();
 
         if (! $feature || $feature->type != 'limit') {
@@ -310,7 +310,7 @@ class PlanSubscription extends Model
      */
     public function getRemainingOf(string $featureCode)
     {
-        $usage = $this->usages()->code($featureCode)->first();
+        $usage = $this->usages()->featureCode($featureCode)->first();
         $feature = $this->features()->code($featureCode)->first();
 
         if (! $feature || $feature->type != 'limit') {

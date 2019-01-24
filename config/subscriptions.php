@@ -19,7 +19,9 @@ return [
      * del Trait
      */
     'models' => [
-        'subscription' => \Abrahamf24\PlansSubscriptions\PlanSubscription::class
+        'subscription' => \Abrahamf24\PlansSubscriptions\PlanSubscription::class,
+        'plan' => \Abrahamf24\PlansSubscriptions\Plan::class,
+        'usage' => \Abrahamf24\PlansSubscriptions\PlanSubscriptionUsage::class,
     ]
 
 ];
