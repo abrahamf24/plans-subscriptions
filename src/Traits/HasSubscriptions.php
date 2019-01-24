@@ -13,7 +13,7 @@ trait HasSubscriptions{
      */
     public function subscriptions()
     {
-        return $this->morphMany(config('subscriptions.models.subscription'), 'model');
+        return $this->morphMany(config('subscriptions.models.subscriptions'), 'model');
     }
 
 	/**
