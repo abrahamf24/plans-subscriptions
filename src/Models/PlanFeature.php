@@ -26,6 +26,23 @@ class PlanFeature extends Model
     }
 
     /**
+     * Boot function for using with events
+     * 
+     * @return void
+     */
+    protected static function boot(){
+        parent::boot();
+
+        static::creating(function($model){
+            //Si el tipo de feature es feature entonces no 
+            //se debe definir límite
+            if($model->type == 'feature'){
+                $model->limit = null;
+            }
+        });
+    }
+
+    /**
      * Returns the model of Plan
      * 
      * @return Abrahamf24\PlansSubscriptions\Models\PlanPeriod
