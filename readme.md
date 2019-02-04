@@ -160,7 +160,7 @@ $planBasico->features()->saveMany([
 # Gestionando suscripciones
 Un usuario u otro tipo de modelo puede suscribirse a distintos periodos de planes, es importante tener en cuenta esto ya que se liga al modelo directamente con un periodo de plan y no con un plan.
 
-## Estatus de una suscripción
+## Estatus de una suscripción, métodos y scopes
 Una suscripción puede tener varios estados dependiendo sus valores, sus estatus son los siguientes:
 
 * **Suscripción cancelada**: Suscripción que ha sido cancelada
@@ -168,7 +168,33 @@ Una suscripción puede tener varios estados dependiendo sus valores, sus estatus
 * **Suscripción activa**: Suscripción que ya ha iniciado y no ha expirado ni ha sido cancelada
 * **Suscripción válida**: Suscripción que ya ha iniciado y no ha sido cancelada, si puede estar expirada
 * **Suscripción indefinida**: Suscripción que nunca caduca, en otras palabras no tiene fecha de expiración
-* **Suscripción cancelada con periodo válido**: Suscripción 
+* **Suscripción cancelada con periodo válido**: Suscripción cancelada que tiene un periodo que aun no llega a su fecha de expiración
+
+Los métodos disponibles para una suscripción son los siguientes:
+
+* `isIndefinied()`: (`boolean`) Indica si la suscripción es indefinida
+* `hasStarted()`: (`boolean`) Indica si la suscripción ha iniciado ya
+* `hasExpired()`: (`boolean`) Indica si la suscripción ha expirado
+* `expiredDays()`: (`int`) Devuelve la cantidad de días que lleva expirada la suscripción
+* `isActive()`: (`boolean`) Indica si la suscripción está activa
+* `isValid()`: (`boolean`) Indica si la suscripción es válida
+* `remainingDays()`: (`int`) Devuleve la cantidad de días restantes de la suscripción
+* `isCancelled()`: (`boolean`) Indica si la suscripción está cancelada
+* `isCancellationWithValidPeriod()`: (`boolean`) Indica si la suscripción está cancelada pero tiene un periodo válido
+
+Los [scopes](https://laravel.com/docs/5.7/eloquent#query-scopes) definidos para el modelo son los siguientes:
+
+* `paid()`: Suscripciones pagadas
+* `unpaid()`: Suscripciones no pagadas
+* `expired()`: Suscripciones expiradas
+* `cancelled()`: Suscripciones canceladas
+* `notCancelled()`: Suscripciones no canceladas
+* `paymentMethod($method)`: Suscripciones por método de pago
+* `name($name)`: Suscripciones por nombre
+* `active()`: Suscripciones activas
+
+## Acciones principales
+Las acciones que se documentan a continuación están disponibles para los modelos que utilizan el trait `HasSubscriptions`
 
 ### Suscripción a un periodo de plan
 Para suscribirse a un periodo de plan hacer lo siguiente:
