@@ -33,11 +33,18 @@ Configurar los nombres de las tablas con los que se crearán las migraciones en 
 return [
     'tables' => [
         'plans' => 'plans',
-        'periods' => 'plan_periods',
-        'subscriptions' => 'plan_subscriptions',
-        'features' => 'plan_features',
-        'usages' => 'plan_subscription_usages'
+        'periods' => 'plans_periods',
+        'subscriptions' => 'plans_subscriptions',
+        'features' => 'plans_features',
+        'usages' => 'plans_subscription_usages'
     ],
+    
+    //O tus propios modelos que extiendan a los originales
+    'models' => [
+        'subscription' => \Abrahamf24\PlansSubscriptions\Models\PlanSubscription::class,
+        'plan' => \Abrahamf24\PlansSubscriptions\Models\Plan::class,
+        'usage' => \Abrahamf24\PlansSubscriptions\Models\PlanSubscriptionUsage::class,
+    ]
 ];
 ```
 
@@ -65,7 +72,7 @@ $plan = Plan::create([
     'name'=>'Gratuito', //El nombre del plan
     'code'=>'gratuito', //El código del plan
     'description'=>'Plan gratuito con características limitadas', // Descripción del plan
-    'type'=>'main' //El tipo de plan
+    'type'=>'main' //El tipo de plan, por default "main"
 ]);
 ```
 
@@ -148,4 +155,93 @@ $planBasico->features()->saveMany([
         ]
     ])
 ]);
+```
+
+# Gestionando suscripciones
+Un usuario u otro tipo de modelo puede suscribirse a distintos periodos de planes, es importante tener en cuenta esto ya que se liga al modelo directamente con un periodo de plan y no con un plan.
+
+## Estatus de una suscripción
+Una suscripción puede tener varios estados dependiendo sus valores, sus estatus son los siguientes:
+
+* **Suscripción cancelada**: Suscripción que ha sido cancelada
+* **Suscripción expirada**: Suscripción que ha sido llegado al fin de su ciclo de periodos
+* **Suscripción activa**: Suscripción que ya ha iniciado y no ha expirado ni ha sido cancelada
+* **Suscripción válida**: Suscripción que ya ha iniciado y no ha sido cancelada, si puede estar expirada
+* **Suscripción indefinida**: Suscripción que nunca caduca, en otras palabras no tiene fecha de expiración
+* **Suscripción cancelada con periodo válido**: Suscripción 
+
+### Suscripción a un periodo de plan
+Para suscribirse a un periodo de plan hacer lo siguiente:
+
+```php
+$plan_period = $plan->periods()->first(); //Obtener el modelo del periodo de plan
+$subscription = $user->subscribeTo($plan_period, 1, 'main');
+```
+
+Los parámetros que acepta `subscribeTo` son:
+```php
+/**
+ * @param PlanPeriod $plan_period El periodo de plan a suscribirse
+ * @param int $periods Número de periodos a suscribirse
+ * @param string $name Nombre de la suscripción, default es "main"
+ * @param string $payment_method Método de pago
+ * @param boolean $is_paid Indica si la suscripción está pagada, para periodos con precio igual a 0 se define true
+ * @return PlanSubscription The PlanSubscription model instance.
+ */
+public function subscribeTo($plan_period, int $periods = null, $name = 'main', $payment_method=null, $is_paid=false)
+```
+
+### Actualizar periodo de plan
+Una actualización de plan se conforma de dos acciones, la primera es cancelar la suscripción actual y después suscribir a un periodo de plan nuevo
+
+```php
+$new_plan_period = $planBasico->periods()->name('mensual')->first(); //Obtener el nuevo periodo de plan
+$subscription = $user->upgradePlanTo($new_plan_period, 1, 'main', 'paypal', true);
+```
+
+Los parámetros que acepta `upgradePlanTo` son:
+```php
+/**
+ * @param PlanModel $new_plan_period El nuevo periodo de plan
+ * @param int $periods El número de periodos
+ * @param string $name El nombre de la suscripción a actualizar
+ * @param string $payment_method El método de pago
+ * @param bool $is_paid Indica si la suscripción está pagada
+ * @return PlanSubscription La nueva suscripción
+ */
+public function upgradePlanTo($new_plan_period, int $periods = null, $name = 'main', $payment_method=null, $is_paid=false)
+```
+
+### Extender suscripción
+Una suscripción puede ser extendida por una cantidad de periodos incluso si ya expiró, en el caso de que no exista la suscripción del tipo indicado se crea una nueva, de igual manera si la suscripción del tipo indicado ha sido cancelada
+
+```php
+$user->extendSubscription('main', 1, false, true);
+```
+
+Los parámetros que acepta `extendSubscription` son:
+```php
+/**
+ * @param string $name          Nombre de la suscripción
+ * @param int    $periods       Cantidad de periodos a extender
+ * @param bool   $startFromNow  Indica si se extenderá a partir del día actual
+ * @return PlanSubscription     El modelo de la suscripción extendida
+ */
+public function extendSubscription($name='main', $periods, bool $startFromNow = true, $is_paid=false)
+```
+
+### Cancelar suscripción
+Una suscripción puede ser cancelada en cualquier momento
+
+```php
+$user->cancelSubscription('main');
+```
+
+Los parámetros que acepta `cancelSubscription` son:
+```php
+/**
+ * @param  string $name Nombre de la suscripción
+ * @return boolean
+ */
+public function cancelSubscription($name='main')
 ```

@@ -24,14 +24,14 @@ trait HasSubscriptions{
      *
      * @return morphMany Relatinship.
      */
-    public function currentSubscriptions()
+    public function activeSubscriptions()
     {
-        return $this->subscriptions()
-            ->where('starts_on', '<=', Carbon::now())
+        return $this->subscriptions()->active();
+            /*->where('starts_on', '<=', Carbon::now())
             ->where(function($query){
             	$query->whereNull('expires_on')
             		->orWhere('expires_on', '>', Carbon::now());
-            });
+            });*/
     }
 
 	/**
@@ -42,7 +42,7 @@ trait HasSubscriptions{
      */
     public function activeSubscription($name = 'main')
     {
-        return $this->currentSubscriptions()->name($name)->paid()->notCancelled()->first();
+        return $this->activeSubscriptions()->name($name)->first();
     }
 
 
@@ -84,7 +84,7 @@ trait HasSubscriptions{
             return $this->activeSubscription($name);
         }
 
-        return $this->subscriptions()->name($name)->latest('starts_on')->paid()->notCancelled()->first();
+        return $this->subscriptions()->name($name)->latest('starts_on')->first();
     }
 
     /**
@@ -168,7 +168,7 @@ trait HasSubscriptions{
      * @param int $periods The number of periods of the plan
      * @param string $name The name of the subscription, default is "main"
      * @param string $payment_method The payment method of the subscription
-     * @param boolean $is_paid  The subscription is paid, true is defined for plan periods with price equals to zero 
+     * @param boolean $is_paid  The subscription is paid, true is defined for plan periods with price equals to zero
      * @return PlanSubscription The PlanSubscription model instance.
      */
     public function subscribeTo($plan_period, int $periods = null, $name = 'main', $payment_method=null, $is_paid=false){
@@ -200,11 +200,12 @@ trait HasSubscriptions{
         //Suscripción termina al final del día
         $endOfDay = Carbon::now();
         $endOfDay->setTime(23,59,59);
+        $expires_on = !$is_recurring && !$periods? null: Dates::addPeriods($endOfDay, $periods, $plan_period->period_count, $plan_period->period_unit);
 
         $subscription = $this->subscriptions()->save(new $subscriptionModel([
             'period_id' => $plan_period->id,
             'starts_on' => Carbon::now()->subSeconds(1),
-            'expires_on' => !$is_recurring && !$periods? null: Dates::addPeriods($endOfDay, $periods, $plan_period->period_count, $plan_period->period_unit),
+            'expires_on' => $expires_on,
             'cancelled_on' => null,
             'payment_method' => $payment_method,
             'is_paid' => (bool) $plan_period->price==0?true:$is_paid,
@@ -237,8 +238,9 @@ trait HasSubscriptions{
         //Si no tiene suscripción activa con name $name
         if (! $this->hasActiveSubscription($name)) {
 
+            return false;
             //Si tiene suscripción con name $name
-            if ($this->hasSubscriptions($name)) {
+            /*if ($this->hasSubscriptions($name)) {
                 $lastActiveSubscription = $this->lastActiveSubscription($name);
                 $lastActiveSubscription->load(['plan_period']);
 
@@ -246,7 +248,7 @@ trait HasSubscriptions{
             }
 
             //En caso de que no tenga suscripciones del name $name
-            return false;
+            return false;*/
         }
 
         return $this->activeSubscription($name)->extend($periods, $startFromNow, $is_paid);
@@ -274,11 +276,12 @@ trait HasSubscriptions{
     /**
      * Upgrade the binded model's plan. If it is the same plan, it just extends it.
      *
-     * @param PlanModel $newPlan The new Plan model instance.
-     * @param int $duration The duration, in days, for the new subscription.
-     * @param bool $startFromNow Wether the subscription will start from now, extending the current plan, or a new subscription will be created to extend the current one.
-     * @param bool $isRecurring Wether the subscription should auto renew. The renewal period (in days) is the difference between now and the set date.
-     * @return PlanSubscription The PlanSubscription model instance with the new plan or the current one, extended.
+     * @param PlanPeriod $new_plan_period The new PlanPeriod model instance.
+     * @param int $periods The number of periods
+     * @param string $name The name of subscription to upgrade
+     * @param string $payment_method The payment method
+     * @param bool $is_paid The subscription is payed
+     * @return PlanSubscription The new PlanSubscription model
      */
     public function upgradePlanTo($new_plan_period, int $periods = null, $name = 'main', $payment_method=null, $is_paid=false)
     {

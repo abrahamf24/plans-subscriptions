@@ -16,7 +16,6 @@ class PlanSubscription extends Model
         'payment_method', 
         'starts_on', 
         'expires_on',
-        'payment_day', 
         'is_paid', 
         'period_id', 
         'is_recurring', 
@@ -113,6 +112,16 @@ class PlanSubscription extends Model
         return $query->where('name',$name);
     }
 
+    public function scopeActive($query){
+        return $query->where('starts_on', '<=', Carbon::now())
+            ->where(function($query){
+                $query->whereNull('expires_on')
+                    ->orWhere('expires_on', '>', Carbon::now());
+            })->notCancelled();
+    }
+
+
+
 
 
     /**
@@ -150,12 +159,33 @@ class PlanSubscription extends Model
     }
 
     /**
+     * Returns the number of days the subscription has expired
+     * 
+     * @return int
+     */
+    public function expiredDays(){
+        if(!$this->hasExpired())
+            return 0;
+
+        return $this->expires_on->diffInDays(Carbon::now());
+    }
+
+    /**
      * Checks if the current subscription is active.
      *
      * @return bool
      */
     public function isActive(){
         return (bool) ($this->hasStarted() && ! $this->hasExpired() && !$this->isCancelled());
+    }
+
+    /**
+     * Checks if the current subscription is valid.
+     *
+     * @return bool
+     */
+    public function isValid(){
+        return (bool) ($this->hasStarted() && !$this->isCancelled());
     }
 
     /**
@@ -340,7 +370,7 @@ class PlanSubscription extends Model
             return false;
         }
 
-        if(!$this->hasExpired()){
+        /*if(!$this->hasExpired()){
             //Agregar periodos desde la fecha en que caducó la sucripción
             $newExpiration = Dates::addPeriods($this->expires_on, $periods, $this->recurring_each_count, $this->recurring_each_unit);
             $this->update([
@@ -350,7 +380,7 @@ class PlanSubscription extends Model
             event(new ExtendSubscription($this->model, $this, $startFromNow, null));
             return $this;
 
-        }else{
+        }else{*/
             if ($startFromNow) {
                 //Agregar periodos desde la fecha actual
                 $newStart = Carbon::now();
@@ -364,23 +394,14 @@ class PlanSubscription extends Model
 
             //Suscripción termina al final del día
             $newExpiration->setTime(23,59,59);
-            $newSubscription = $this->model->subscriptions()->save( new $subscriptionModel([
-                'period_id' => $this->plan_period->id,
-                'starts_on' => $newStart,
+            $this->update([
                 'expires_on' => $newExpiration,
-                'cancelled_on' => null,
-                'payment_method' => $this->payment_method,
-                'is_paid' => (bool) $this->charging_price==0?true:$is_paid,
-                'charging_price' => $this->charging_price,
-                'charging_currency' => $this->charging_currency,
-                'is_recurring' => $this->is_recurring,
-                'recurring_each_unit' => $this->recurring_each_unit,
-                'recurring_each_count' => $this->recurring_each_count,
-            ]));
+                'is_paid' => (bool) $this->charging_price==0?true:$is_paid
+            ]);
 
-            event(new ExtendSubscription($this->model, $this, $startFromNow, $newSubscription));
-            return $newSubscription;
-        }
+            event(new ExtendSubscription($this->model, $this, $startFromNow, $this));
+            return $this;
+        /*}*/
     }
 
 }

@@ -28,6 +28,7 @@ class CreatePlansSubscriptionsTable extends Migration {
 			$table->integer('recurring_each_count')->nullable()->default(1);
 			$table->dateTime('starts_on');
 			$table->dateTime('expires_on')->nullable();
+			$table->dateTime('payment_tolerance')->nullable();
 			$table->dateTime('cancelled_on')->nullable();
 			$table->timestamps();
 		});
