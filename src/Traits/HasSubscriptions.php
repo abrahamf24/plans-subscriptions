@@ -193,9 +193,6 @@ trait HasSubscriptions{
             return false;
         }
 
-        if ($this->hasDueSubscription($name)) {
-            $this->lastDueSubscription($name)->delete();
-        }
 
         //Suscripción termina al final del día
         $endOfDay = Carbon::now();
