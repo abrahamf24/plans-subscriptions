@@ -172,7 +172,11 @@ class PlanSubscription extends Model
         if(!$this->hasExpired())
             return 0;
 
-        return $this->expires_on->diffInDays(Carbon::now());
+        $expire = $this->expires_on->copy();
+        $now = Carbon::now();
+        $expire->setTime(0,0,0);
+        $now->setTime(0,0,0);
+        return $expire->diffInDays($now);
     }
 
     /**
