@@ -120,6 +120,11 @@ class PlanSubscription extends Model
             })->notCancelled();
     }
 
+    public function scopeValid($query){
+        return $query->where('starts_on', '<=', Carbon::now())
+            ->notCancelled();
+    }
+
 
 
 

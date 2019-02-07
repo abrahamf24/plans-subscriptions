@@ -38,7 +38,7 @@ trait HasSubscriptions{
      * Return the current active subscription.
      * 
      * @param  $name The name of subscription
-     * @return PlanSubscriptionModel The PlanSubscription model instance.
+     * @return PlanSubscription The PlanSubscription model instance.
      */
     public function activeSubscription($name = 'main')
     {
@@ -55,6 +55,34 @@ trait HasSubscriptions{
     public function hasActiveSubscription($name='main')
     {
         return (bool) $this->activeSubscription($name);
+    }
+
+    /**
+     * Return valid subscriptions
+     * 
+     * @return morphMany Relatinship.
+     */
+    public function validSubscriptions(){
+        return $this->subscriptions()->valid();
+    }
+
+    /**
+     * Return valid subscription
+     * 
+     * @param  $name     Name of subscription 
+     * @return PlanSubscription
+     */
+    public function validSubscription($name='main'){
+        return $this->validSubscriptions()->name($name)->first();
+    }
+
+    /**
+     * Check if the model has valid subscription
+     * 
+     * @return morphMany Relatinship.
+     */
+    public function hasValidSubscription($name='main'){
+        return (bool) $this->validSubscription($name);
     }
 
     /**
