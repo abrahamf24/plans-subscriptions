@@ -342,6 +342,22 @@ class PlanSubscription extends Model
     }
 
     /**
+     * Check if subscription has feature
+     * 
+     * @param  string  $featureCode 
+     * @return boolean              
+     */
+    public function hasFeature(string $featureCode){
+        $feature = $this->features()->code($featureCode)->first();
+
+        if (!$feature) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Get the amount remaining for a feature.
      *
      * @param string $featureCode The feature code. This feature has to be 'limit' type.
