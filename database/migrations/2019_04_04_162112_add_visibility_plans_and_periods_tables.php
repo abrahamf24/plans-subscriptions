@@ -13,10 +13,10 @@ class AddVisibilityPlansAndPeriodsTables extends Migration
      */
     public function up()
     {
-        Schema::table('subscriptions.tables.plans', function (Blueprint $table) {
+        Schema::table(config('subscriptions.tables.plans'), function (Blueprint $table) {
             $table->enum('visibility', array('public','hidden'))->default('public');
         });
-        Schema::table('subscriptions.tables.periods', function (Blueprint $table) {
+        Schema::table(config('subscriptions.tables.periods'), function (Blueprint $table) {
             $table->enum('visibility', array('public','hidden'))->default('public');
         });
     }
@@ -28,10 +28,10 @@ class AddVisibilityPlansAndPeriodsTables extends Migration
      */
     public function down()
     {
-        Schema::table('subscriptions.tables.plans', function (Blueprint $table) {
+        Schema::table(config('subscriptions.tables.plans'), function (Blueprint $table) {
             $table->dropColumn('visibility');
         });
-        Schema::table('subscriptions.tables.periods', function (Blueprint $table) {
+        Schema::table(config('subscriptions.tables.periods'), function (Blueprint $table) {
             $table->dropColumn('visibility');
         });
     }

@@ -3,6 +3,7 @@
 namespace Abrahamf24\PlansSubscriptions\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Plan extends Model
 {
