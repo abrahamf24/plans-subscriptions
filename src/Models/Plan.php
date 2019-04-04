@@ -14,6 +14,9 @@ class Plan extends Model
         'metadata' => 'object',
     ];
 
+    public const VISIBILITY_PUBLIC = 'public';
+    public const VISIBILITY_HIDDEN = 'hidden';
+
     /**
      * Plan constructor.
      *
@@ -40,6 +43,11 @@ class Plan extends Model
                 throw new \Exception("There is a plan with same code and same type", 1);
             }
         });
+
+        //Solo devolver planes públicos
+        static::addGlobalScope('publics', function(Builder $builder){
+            $builder->where('visibility','public');
+        });
     }
 
     /**
@@ -58,6 +66,24 @@ class Plan extends Model
      */
     public function features(){
         return $this->hasMany('Abrahamf24\PlansSubscriptions\Models\PlanFeature', 'plan_id');
+    }
+
+    /**
+     * Check if a plan is public
+     * 
+     * @return boolean
+     */
+    public function isPublic(){
+        return $this->visibility == self::VISIBILITY_PUBLIC;
+    }
+
+    /**
+     * Check if a plan is hidden
+     * 
+     * @return boolean
+     */
+    public function isHidden(){
+        return $this->visibility == self::VISIBILITY_HIDDEN;
     }
 
     /**

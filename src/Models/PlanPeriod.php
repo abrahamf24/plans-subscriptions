@@ -14,6 +14,9 @@ class PlanPeriod extends Model
     	'is_recurring'=>'boolean'
     ];
 
+    public const VISIBILITY_PUBLIC = 'public';
+    public const VISIBILITY_HIDDEN = 'hidden';
+
     /**
      * PlanPeriod constructor.
      *
@@ -49,6 +52,11 @@ class PlanPeriod extends Model
                 $model->is_recurring = false;
             }
         });
+
+        //Solo devolver periodos públicos
+        static::addGlobalScope('publics', function(Builder $builder){
+            $builder->where('visibility','public');
+        });
     }
 
     /**
@@ -58,6 +66,24 @@ class PlanPeriod extends Model
      */
     public function plan(){
     	return $this->belongsTo(config('subscriptions.models.plan'), 'plan_id');
+    }
+
+    /**
+     * Check if a period is public
+     * 
+     * @return boolean
+     */
+    public function isPublic(){
+        return $this->visibility == self::VISIBILITY_PUBLIC;
+    }
+
+    /**
+     * Check if a period is hidden
+     * 
+     * @return boolean
+     */
+    public function isHidden(){
+        return $this->visibility == self::VISIBILITY_HIDDEN;
     }
 
     public function scopeName($query, $name){
