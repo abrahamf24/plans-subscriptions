@@ -48,7 +48,7 @@ class PlanFeature extends Model
      * @return Abrahamf24\PlansSubscriptions\Models\PlanPeriod
      */
     public function plan(){
-    	return $this->belongsTo('Abrahamf24\PlansSubscriptions\Models\PlanPeriod', 'plan_id');
+    	return $this->belongsTo(config('subscriptions.models.plan'), 'plan_id');
     }
 
     /**

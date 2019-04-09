@@ -12,7 +12,7 @@ use Abrahamf24\PlansSubscriptions\Events\ExtendSubscription;
 class PlanSubscription extends Model
 {
     protected $fillable = [
-    	'name', 
+        'name', 
         'payment_method', 
         'starts_on', 
         'expires_on',
@@ -32,7 +32,7 @@ class PlanSubscription extends Model
     ];
 
     protected $casts = [
-    	'is_paid'=>'boolean'
+        'is_paid'=>'boolean'
     ];
 
     /**
@@ -62,7 +62,7 @@ class PlanSubscription extends Model
      * @return Abrahamf24\PlansSubscriptions\Models\PlanPeriod
      */
     public function plan_period(){
-        return $this->belongsTo('Abrahamf24\PlansSubscriptions\Models\PlanPeriod', 'period_id');
+        return $this->belongsTo(config('subscriptions.models.period'), 'period_id');
     }
 
     /**
@@ -261,11 +261,11 @@ class PlanSubscription extends Model
             return false;
         }
 
-        $usage = $this->usages()->code($featureCode)->first();
+        $usage = $this->usages()->featureCode($featureCode)->first();
 
         if (! $usage) {
             $usage = $this->usages()->save(new $usageModel([
-                'code' => $featureCode,
+                'feature_code' => $featureCode,
                 'used' => 0,
             ]));
         }

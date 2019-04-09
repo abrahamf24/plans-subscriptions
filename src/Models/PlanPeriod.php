@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Builder;
 class PlanPeriod extends Model
 {
     protected $fillable = [
-    	'name', 'price', 'currency', 'period_unit', 'period_count', 'is_recurring'
+        'name', 'price', 'currency', 'period_unit', 'period_count', 'is_recurring', 'visibility'
     ];
 
     protected $casts = [
-    	'is_recurring'=>'boolean'
+        'is_recurring'=>'boolean'
     ];
 
     public const VISIBILITY_PUBLIC = 'public';
@@ -66,7 +66,11 @@ class PlanPeriod extends Model
      * @return Plan
      */
     public function plan(){
-    	return $this->belongsTo(config('subscriptions.models.plan'), 'plan_id');
+        return $this->belongsTo(config('subscriptions.models.plan'), 'plan_id');
+    }
+
+    public function subscriptions(){
+        return $this->hasMany(config('subscriptions.models.subscription'), 'period_id');
     }
 
     /**

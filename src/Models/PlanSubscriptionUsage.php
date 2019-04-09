@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class PlanSubscriptionUsage extends Model
 {
     protected $fillable = [
-    	
+        'feature_code',
+        'used'
     ];
 
     /**

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 class Plan extends Model
 {
     protected $fillable = [
-    	'name', 'code', 'description', 'type', 'metadata'
+    	'name', 'code', 'description', 'type', 'metadata', 'visibility'
     ];
 
     protected $casts = [
@@ -57,7 +57,7 @@ class Plan extends Model
      * @return Collection
      */
     public function periods(){
-    	return $this->hasMany('Abrahamf24\PlansSubscriptions\Models\PlanPeriod', 'plan_id');
+    	return $this->hasMany(config('subscriptions.models.period'), 'plan_id');
     }
 
     /**
@@ -66,7 +66,7 @@ class Plan extends Model
      * @return Collection
      */
     public function features(){
-        return $this->hasMany('Abrahamf24\PlansSubscriptions\Models\PlanFeature', 'plan_id');
+        return $this->hasMany(config('subscriptions.models.feature'), 'plan_id');
     }
 
     /**
