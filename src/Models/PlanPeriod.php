@@ -66,7 +66,7 @@ class PlanPeriod extends Model
      * @return Plan
      */
     public function plan(){
-        return $this->belongsTo(config('subscriptions.models.plan'), 'plan_id');
+        return $this->hasOne(config('subscriptions.models.plan'),'id','plan_id')->withoutGlobalScope('publics');
     }
 
     public function subscriptions(){

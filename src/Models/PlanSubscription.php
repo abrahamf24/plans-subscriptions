@@ -62,7 +62,7 @@ class PlanSubscription extends Model
      * @return Abrahamf24\PlansSubscriptions\Models\PlanPeriod
      */
     public function plan_period(){
-        return $this->belongsTo(config('subscriptions.models.period'), 'period_id');
+        return $this->belongsTo(config('subscriptions.models.period'), 'period_id')->withoutGlobalScope('publics');
     }
 
     /**
@@ -326,7 +326,7 @@ class PlanSubscription extends Model
      * @return null|float Null if doesn't exist, integer with the usage.
      */
     public function getUsageOf(string $featureCode)
-    {
+    {   
         $usage = $this->usages()->featureCode($featureCode)->first();
         $feature = $this->features()->code($featureCode)->first();
 
